@@ -1,31 +1,33 @@
 ﻿using System;
 using System.ServiceModel;
+using System.Threading.Tasks;
+using EssentialWCF;
 
 namespace EssentialWCFClient
 {
     class Program
     {
-        static void Main()
+        static async Task Main()
         {
             ChannelFactory<ISimpleContract> factory = new ChannelFactory<ISimpleContract>(
                 new BasicHttpBinding(),
-                new EndpointAddress("http://localhost:8000/WcfService"));
+                new EndpointAddress("http://localhost:8000/WcfService")
+            );
 
             ISimpleContract proxy = factory.CreateChannel();
 
-            DateTime serverTime = proxy.GetCurrentTime();
-            Console.WriteLine($"время на сервере: {serverTime}");
+            Console.WriteLine("дата (г-м-д):");
+            string input = Console.ReadLine();
 
-            string folderPath = @"C:\Users\kolja\source\repos\WcfService\WcfService";
-            string[] files = proxy.GetFolderContent(folderPath);
-
-            Console.WriteLine("файлы в папке:");
-            foreach (var file in files)
+            if (DateTime.TryParse(input, out DateTime date))
             {
-                Console.WriteLine(file);
+                string dayOfWeek = await proxy.GetDayOfWeekAsync(date);
+                Console.WriteLine($"день недели: {dayOfWeek}");
             }
-
-            Console.ReadKey();
+            else
+            {
+                Console.WriteLine("Ошибка: неверный формат даты.");
+            }
         }
     }
 }

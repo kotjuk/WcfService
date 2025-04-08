@@ -11,7 +11,7 @@ namespace EssentialWCF
 
             using (ServiceHost host = new ServiceHost(typeof(SimpleService), baseAddress))
             {
-                host.AddServiceEndpoint(typeof(ISimpleContract), new BasicHttpBinding(), ""); 
+                host.AddServiceEndpoint(typeof(ISimpleContract), new BasicHttpBinding(), "");
 
                 host.Open();
                 Console.WriteLine("WCF-сервис запущен по адресу: " + baseAddress);

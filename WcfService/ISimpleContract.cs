@@ -1,15 +1,19 @@
 ﻿using System;
 using System.ServiceModel;
+using System.Threading.Tasks;
 
 namespace EssentialWCF
 {
-    [ServiceContract] 
+    [ServiceContract]
     public interface ISimpleContract
     {
-        [OperationContract] 
-        DateTime GetCurrentTime();
+        [OperationContract]
+        Task<DateTime> GetCurrentTimeAsync();
 
-        [OperationContract] 
-        string[] GetFolderContent(string path);
+        [OperationContract]
+        Task<string[]> GetFolderContentAsync(string path);
+
+        [OperationContract]
+        Task<string> GetDayOfWeekAsync(DateTime date);
     }
 }

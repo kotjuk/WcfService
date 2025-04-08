@@ -1,39 +1,34 @@
 ﻿using System;
 using System.IO;
+using System.ServiceModel;
+using System.Threading.Tasks;
 
 namespace EssentialWCF
 {
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession)]
     public class SimpleService : ISimpleContract
     {
-        private DateTime _instanceTime;
+        private readonly DateTime _instanceTime;
 
         public SimpleService()
         {
-            _instanceTime = DateTime.Now;
+            _instanceTime = DateTime.Now; 
         }
 
-        public DateTime GetCurrentTime()
+        public async Task<DateTime> GetCurrentTimeAsync()
         {
-            return _instanceTime;
+            await Task.Delay(100); 
+            return _instanceTime; 
         }
 
-        public string[] GetFolderContent(string path)
+        public async Task<string[]> GetFolderContentAsync(string path)
         {
-            try
-            {
-                if (Directory.Exists(path))
-                {
-                    return Directory.GetFiles(path); 
-                }
-                else
-                {
-                    return new string[] { "ошибка: папка не найдена" };
-                }
-            }
-            catch (Exception ex)
-            {
-                return new string[] { "Ошибка: " + ex.Message };
-            }
+            return await Task.Run(() => Directory.GetFiles(path)); 
+        }
+
+        public async Task<string> GetDayOfWeekAsync(DateTime date)
+        {
+            return await Task.Run(() => date.DayOfWeek.ToString());
         }
     }
 }
