@@ -1,34 +1,32 @@
 ﻿using System;
-using System.IO;
 using System.ServiceModel;
 using System.Threading.Tasks;
 
 namespace EssentialWCF
 {
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession)]
     public class SimpleService : ISimpleContract
     {
-        private readonly DateTime _instanceTime;
+        public Task<DateTime> GetCurrentTimeAsync() =>
+            Task.FromResult(DateTime.Now);
 
-        public SimpleService()
+        public Task<string[]> GetFolderContentAsync(string path) =>
+            Task.FromResult(System.IO.Directory.GetFiles(path));
+
+        public Task<string> GetDayOfWeekAsync(DateTime date) =>
+            Task.FromResult(date.DayOfWeek.ToString());
+
+        public Task<int> AddAsync(int a, int b, string username)
         {
-            _instanceTime = DateTime.Now; 
+            if (username != "adder")
+                throw new FaultException("Доступ запрещен: у вас нет прав на сложение.");
+            return Task.FromResult(a + b);
         }
 
-        public async Task<DateTime> GetCurrentTimeAsync()
+        public Task<int> SubtractAsync(int a, int b, string username)
         {
-            await Task.Delay(100); 
-            return _instanceTime; 
-        }
-
-        public async Task<string[]> GetFolderContentAsync(string path)
-        {
-            return await Task.Run(() => Directory.GetFiles(path)); 
-        }
-
-        public async Task<string> GetDayOfWeekAsync(DateTime date)
-        {
-            return await Task.Run(() => date.DayOfWeek.ToString());
+            if (username != "subtractor")
+                throw new FaultException("Доступ запрещен: у вас нет прав на вычитание.");
+            return Task.FromResult(a - b);
         }
     }
 }

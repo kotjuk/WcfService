@@ -15,5 +15,11 @@ namespace EssentialWCF
 
         [OperationContract]
         Task<string> GetDayOfWeekAsync(DateTime date);
+
+        [OperationContract]
+        Task<int> AddAsync(int a, int b, string username);
+
+        [OperationContract]
+        Task<int> SubtractAsync(int a, int b, string username);
     }
 }

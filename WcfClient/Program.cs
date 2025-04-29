@@ -16,17 +16,35 @@ namespace EssentialWCFClient
 
             ISimpleContract proxy = factory.CreateChannel();
 
-            Console.WriteLine("дата (г-м-д):");
-            string input = Console.ReadLine();
+            Console.Write("Введите имя пользователя (adder или subtractor): ");
+            string username = Console.ReadLine();
 
-            if (DateTime.TryParse(input, out DateTime date))
+            Console.Write("Введите первое число: ");
+            int a = int.Parse(Console.ReadLine());
+
+            Console.Write("Введите второе число: ");
+            int b = int.Parse(Console.ReadLine());
+
+            try
             {
-                string dayOfWeek = await proxy.GetDayOfWeekAsync(date);
-                Console.WriteLine($"день недели: {dayOfWeek}");
+                if (username == "adder")
+                {
+                    int result = await proxy.AddAsync(a, b, username);
+                    Console.WriteLine($"Результат сложения: {result}");
+                }
+                else if (username == "subtractor")
+                {
+                    int result = await proxy.SubtractAsync(a, b, username);
+                    Console.WriteLine($"Результат вычитания: {result}");
+                }
+                else
+                {
+                    Console.WriteLine("Неизвестный пользователь.");
+                }
             }
-            else
+            catch (FaultException ex)
             {
-                Console.WriteLine("Ошибка: неверный формат даты.");
+                Console.WriteLine("Ошибка: " + ex.Message);
             }
         }
     }
